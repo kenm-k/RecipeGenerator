@@ -3,7 +3,8 @@ let keys = [];
 
 function Crafting_shaped_AddKeys()
 {
-    keys.push(["", "", ""]);
+    keys.push([`${keys.length}`, "", ""]);
+    Crafting_shaped_cell_update();
     Crafting_shaped_update();
 }
 

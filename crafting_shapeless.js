@@ -3,7 +3,7 @@ let keysShapeless = [];
 
 function Crafting_shapeless_AddKeys()
 {
-    keysShapeless.push(["", "", ""]);
+    keysShapeless.push([`${keysShapeless.length}`, "", ""]);
     Crafting_shapeless_update();
 }
 

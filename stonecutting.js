@@ -3,7 +3,7 @@ let keysStonecutting = [];
 
 function stonecutting_AddKeys()
 {
-    keysStonecutting.push(["", "", ""]);
+    keysStonecutting.push([`${keysStonecutting.length}`, "", ""]);
     stonecutting_update();
 }
 

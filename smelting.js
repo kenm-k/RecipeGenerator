@@ -3,7 +3,7 @@ let keysSmelting = [];
 
 function smelting_AddKeys()
 {
-    keysSmelting.push(["", "", ""]);
+    keysSmelting.push([`${keysSmelting.length}`, "", ""]);
     smelting_update();
 }
 
@@ -48,7 +48,7 @@ function smelting_update()
 function smelting_generate()
 {
     let obj = CreateNewObject();
-    obj = AddElement(obj, CreateNewPair("type", '"minecraft:smelting"'));
+    obj = AddElement(obj, CreateNewPair("type", `"${document.getElementById("smelting_mode").value}"`));
 
     let group = document.getElementById("smelting_group").value;
     if (group != "") obj = AddElement(obj, CreateNewPair("group", `"${group}"`));

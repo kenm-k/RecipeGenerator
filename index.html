@@ -9,9 +9,9 @@
 	body{ font-size:16pt; font-weight:bold; font-family: sans-serif; background-color: rgb(48, 48, 48); color: rgb(192, 192, 192);}
 	h1 { color:white;padding:5px; font-size:24pt;
 		background-color:rgb(88, 88, 88); }
-	div	{ margin : 30px ; padding : 20px ; border: 5px solid rgb(192, 192, 192); border-radius: 10px; }
+	div	{ margin : 30px ; padding : 20px ; border: 5px solid rgb(56, 102, 63); border-radius: 10px; }
 	input { color: rgb(192, 192, 192); background-color: rgb(51, 51, 51); }
-	select { color: rgb(192, 192, 192); background-color: rgb(51, 51, 51); }
+	select { color: rgb(192, 192, 192); background-color: rgb(51, 51, 51); margin: 30px; height: 30px; }
 	textarea { color: rgb(192, 192, 192); background-color: rgb(51, 51, 51); }
 	</style>
 
@@ -21,6 +21,8 @@
 	<script src="smelting.js"></script>
 	<script src="smithing.js"></script>
 	<script src="stonecutting.js"></script>
+	<script src="metallurgic_infusing.js"></script>
+	<script src="altar_crafting.js"></script>
 	<script>
 
 		let types = [];
@@ -31,6 +33,8 @@
 			types.push(document.getElementById("minecraft:smelting/blasting/campfire_cooking/smoking"));
 			types.push(document.getElementById("minecraft:smithing"));
 			types.push(document.getElementById("minecraft:stonecutting"));
+			types.push(document.getElementById("mekanism:metallurgic_infusing"));
+			types.push(document.getElementById("touhou_little_maid:altar_crafting"));
 
 			HideAll();
 		}
@@ -55,17 +59,19 @@
 <body onload="setup();">
 
 	<h1>クラフトついーかー for minecraft 1.20.1</h1>
-	<select id="type" style="margin: 30px; height: 30px;" onchange="selected();">
+	<select id="type" onchange="selected();">
 		<option value="none">レシピタイプを選択してください</option>
 		<option value="minecraft:crafting_shaped">crafting_shaped（バニラ-固定レシピ）</option>
 		<option value="minecraft:crafting_shapeless">crafting_shapeless（バニラ-不定形レシピ）</option>
 		<option value="minecraft:smelting/blasting/campfire_cooking/smoking">smelting/blasting/campfire_cooking/smoking（バニラ-精錬系レシピ）</option>
 		<option value="minecraft:smithing">smithing（バニラ-鍛冶台レシピ）</option>
 		<option value="minecraft:stonecutting">stonecutting（バニラ-石切台レシピ）</option>
+		<option value="mekanism:metallurgic_infusing">metallurgic_infusing（メカニズム-冶金吹込レシピ）</option>
+		<option value="touhou_little_maid:altar_crafting">altar_crafting（東方リトルメイド-祭壇レシピ）</option>
 	</select>
 
 	<div id="minecraft:crafting_shaped" style="display: none;">
-		<table border="1px" width="25%">
+		<table border="1px">
 			<tr>
 				<td><select id="Crafting_shaped_cell0"> <option value=" ">無</option> </select></td>
 				<td><select id="Crafting_shaped_cell1"> <option value=" ">無</option> </select></td>
@@ -103,7 +109,7 @@
 
 	<div id="minecraft:smelting/blasting/campfire_cooking/smoking" style="display: none;">
 		タイプ
-		<select>
+		<select id="smelting_mode">
 			<option value="minecraft:smelting">smelting（バニラ-かまど）</option>
 			<option value="minecraft:blasting">blasting（バニラ-溶鉱炉）</option>
 			<option value="minecraft:campfire_cooking">campfire_cooking（バニラ-焚き火）</option>
@@ -154,6 +160,50 @@
 		<button onclick="stonecutting_AddKeys();">+</button>
 		<button onclick="stonecutting_RemoveKeys();">-</button>
 		<div id="stonecutting_keys" style="border: none; margin: 0px; padding: 0px;">
+		</div>
+	</div>
+
+	<div id="mekanism:metallurgic_infusing">
+		グループ : <input type="text" id="metallurgic_infusing_group" placeholder="任意"><br>
+		<div>
+			chemical input<br>
+			<select id="metallurgic_infusing_chemical_mode">
+				<option value="mekanism:bio">bio</option>
+				<option value="mekanism:carbon">carbon</option>
+				<option value="mekanism:diamond">diamond</option>
+				<option value="mekanism:fungi">fungi</option>
+				<option value="mekanism:gold">gold</option>
+				<option value="mekanism:redstone">redstone</option>
+				<option value="mekanism:tin">tin</option>
+			</select>
+			amount : <input type="number" placeholder="mb" value="20" id="metallurgic_infusing_chemical_amount">
+		</div>
+		<div>
+			item input<br>
+			id : <input type="text" id="metallurgic_infusing_input_id"> tag : <input type="text" id="metallurgic_infusing_input_tag"><br>
+			amount : <input type="number" placeholder="個" value="1" id="metallurgic_infusing_input_amount">
+		</div>
+		<div>
+			output<br>
+			item id : <input type="text" id="metallurgic_infusing_output_id"><br>
+			count : <input type="number" value="1" id="metallurgic_infusing_output_count">
+		</div>
+		<button onclick="metallurgic_infusing_generate();">Generate</button>
+	</div>
+
+	<div id="touhou_little_maid:altar_crafting">
+		グループ : <input type="text" id="altar_crafting_group" placeholder="任意"><br>
+		<div>
+			output<br>
+			type（minecraft:item） : <input type="text" id="altar_crafting_type"><br>
+			nbt（jsonで記述してください） : <br>
+			<textarea placeholder="{nbt}-両端の{}も必要です" id="altar_crafting_nbt"></textarea>
+		</div>
+		power（必要なP点の量） : <input type="number" id="altar_crafting_power" value="0.2"><br>
+		<button onclick="altar_crafting_generate();">Generate</button>
+		<button onclick="altar_crafting_AddKeys();">+</button>
+		<button onclick="altar_crafting_RemoveKeys();">-</button>
+		<div id="altar_crafting_keys" style="border: none; margin: 0px; padding: 0px;">
 		</div>
 	</div>
 
