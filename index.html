@@ -6,20 +6,31 @@
 	<link rel="icon" href="favicon.ico" id="favicon">
 	<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-180x180.png">
 	<style>
-	body{ font-size:16pt; font-weight:bold; }
+	body{ font-size:16pt; font-weight:bold; font-family: sans-serif; background-color: rgb(48, 48, 48); color: rgb(192, 192, 192);}
 	h1 { color:white;padding:5px; font-size:24pt;
-		background-color:red; }
-	div	{ margin : 30px ; padding : 20px ; border: 5px solid black; }
+		background-color:rgb(88, 88, 88); }
+	div	{ margin : 30px ; padding : 20px ; border: 5px solid rgb(192, 192, 192); border-radius: 10px; }
+	input { color: rgb(192, 192, 192); background-color: rgb(51, 51, 51); }
+	select { color: rgb(192, 192, 192); background-color: rgb(51, 51, 51); }
+	textarea { color: rgb(192, 192, 192); background-color: rgb(51, 51, 51); }
 	</style>
 
 	<script src="json_editor.js"></script>
 	<script src="crafting_shaped.js"></script>
+	<script src="crafting_shapeless.js"></script>
+	<script src="smelting.js"></script>
+	<script src="smithing.js"></script>
+	<script src="stonecutting.js"></script>
 	<script>
 
 		let types = [];
 		function setup()
 		{
 			types.push(document.getElementById("minecraft:crafting_shaped"));
+			types.push(document.getElementById("minecraft:crafting_shapeless"));
+			types.push(document.getElementById("minecraft:smelting/blasting/campfire_cooking/smoking"));
+			types.push(document.getElementById("minecraft:smithing"));
+			types.push(document.getElementById("minecraft:stonecutting"));
 
 			HideAll();
 		}
@@ -43,10 +54,14 @@
 
 <body onload="setup();">
 
-	<h1>クラフトついーかー</h1>
+	<h1>クラフトついーかー for minecraft 1.20.1</h1>
 	<select id="type" style="margin: 30px; height: 30px;" onchange="selected();">
 		<option value="none">レシピタイプを選択してください</option>
-		<option value="minecraft:crafting_shaped">crafting_shaped（普通の作業台-固定レシピ）</option>
+		<option value="minecraft:crafting_shaped">crafting_shaped（バニラ-固定レシピ）</option>
+		<option value="minecraft:crafting_shapeless">crafting_shapeless（バニラ-不定形レシピ）</option>
+		<option value="minecraft:smelting/blasting/campfire_cooking/smoking">smelting/blasting/campfire_cooking/smoking（バニラ-精錬系レシピ）</option>
+		<option value="minecraft:smithing">smithing（バニラ-鍛冶台レシピ）</option>
+		<option value="minecraft:stonecutting">stonecutting（バニラ-石切台レシピ）</option>
 	</select>
 
 	<div id="minecraft:crafting_shaped" style="display: none;">
@@ -67,11 +82,78 @@
 				<td><select id="Crafting_shaped_cell8"> <option value=" ">無</option> </select></td>
 			</tr>
 		</table>
+		グループ : <input type="text" id="Crafting_shaped_group" placeholder="任意"><br>
 		<br> result : アイテムid <input type="text" placeholder="アイテムid" id="Crafting_shaped_result_id">, 個数 <input type="number" placeholder="個数" value="1" id="Crafting_shaped_result_count"><br>
 		<button onclick="Crafting_shaped_generate();">Generate</button>
 		<button onclick="Crafting_shaped_AddKeys();">+</button>
 		<button onclick="Crafting_shaped_RemoveKeys();">-</button>
 		<div id="Crafting_shaped_keys" style="border: none; margin: 0px; padding: 0px;">
+		</div>
+	</div>
+
+	<div id="minecraft:crafting_shapeless" style="display: none;">
+		グループ : <input type="text" id="Crafting_shapeless_group" placeholder="任意"><br>
+		<br> result : アイテムid <input type="text" placeholder="アイテムid" id="Crafting_shapeless_result_id">, 個数 <input type="number" placeholder="個数" value="1" id="Crafting_shapeless_result_count"><br>
+		<button onclick="Crafting_shapeless_generate();">Generate</button>
+		<button onclick="Crafting_shapeless_AddKeys();">+</button>
+		<button onclick="Crafting_shapeless_RemoveKeys();">-</button>
+		<div id="Crafting_shapeless_keys" style="border: none; margin: 0px; padding: 0px;">
+		</div>
+	</div>
+
+	<div id="minecraft:smelting/blasting/campfire_cooking/smoking" style="display: none;">
+		タイプ
+		<select>
+			<option value="minecraft:smelting">smelting（バニラ-かまど）</option>
+			<option value="minecraft:blasting">blasting（バニラ-溶鉱炉）</option>
+			<option value="minecraft:campfire_cooking">campfire_cooking（バニラ-焚き火）</option>
+			<option value="minecraft:smoking">smoking（バニラ-燻製器）</option>
+		</select>
+		グループ : <input type="text" id="smelting_group" placeholder="任意"><br>
+		<br> result : アイテムid <input type="text" placeholder="アイテムid" id="smelting_result_id"><!--, 個数 <input type="number" placeholder="個数" value="1" id="smelting_result_count">--><br>
+		経験値 : <input type="number" id="smelting_expAmount">, 待ち時間（tick） : <input type="number" id="smelting_waitingtime"><br>
+		<button onclick="smelting_generate();">Generate</button>
+		<button onclick="smelting_AddKeys();">+</button>
+		<button onclick="smelting_RemoveKeys();">-</button><br>
+		<div id="smelting_keys" style="border: none; margin: 0px; padding: 0px;">
+		</div>
+	</div>
+
+	<div id="minecraft:smithing">
+		グループ : <input type="text" id="smithing_group" placeholder="任意"><br>
+		result : アイテムid <input type="text" placeholder="アイテムid" id="smithing_result_id">（trimだと使わない...っぽい）<br>
+		<select id="smithing_mode">
+			<option value="minecraft:smithing_trim">smithing_trim</option>
+			<option value="minecraft:smithing_transform">smithing_transform</option>
+		</select><br>
+		<div>
+			template<br>
+			item : <input type="text" id="smithing_template_item">
+			tag : <input type="text" id="smithing_template_tag">
+		</div>
+
+		<div>
+			base<br>
+			item : <input type="text" id="smithing_base_item">
+			tag : <input type="text" id="smithing_base_tag">
+		</div>
+
+		<div>
+			addition<br>
+			item : <input type="text" id="smithing_addition_item">
+			tag : <input type="text" id="smithing_addition_tag">
+		</div>
+		<br>
+		<button onclick="smithing_generate();">Generate</button>
+	</div>
+
+	<div id="minecraft:stonecutting" style="display: none;">
+		グループ : <input type="text" id="stonecutting_group" placeholder="任意"><br>
+		<br> result : アイテムid <input type="text" placeholder="アイテムid" id="stonecutting_result_id">, 個数 <input type="number" placeholder="個数" value="1" id="stonecutting_result_count"><br>
+		<button onclick="stonecutting_generate();">Generate</button>
+		<button onclick="stonecutting_AddKeys();">+</button>
+		<button onclick="stonecutting_RemoveKeys();">-</button>
+		<div id="stonecutting_keys" style="border: none; margin: 0px; padding: 0px;">
 		</div>
 	</div>
 

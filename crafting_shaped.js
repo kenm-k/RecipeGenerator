@@ -63,10 +63,9 @@ function Crafting_shaped_update()
 
         newdiv.innerHTML = `
             key（1文字の半角英数記号） : <input type="text" placeholder="key" value="${keys[i][0] ?? ''}" id="Crafting_shaped_key${i}" onchange="Crafting_shaped_onchange(${i});"><br>
-            item or tag : <select id="Crafting_shaped_itemortag${i}" onchange="Crafting_shaped_onchange(${i});">
-            ${keys[i][1] != "tag" ? "<option selected>item</option><option>tag</option></select>" : "<option>item</option><option selected>tag</option></select>"}
+            item : <input type="text" value="${keys[i][1] ?? ''}" id="Crafting_shaped_itemortag${i}" onchange="Crafting_shaped_onchange(${i});">
             <br>
-            id or tag : <input type="text" value="${keys[i][2] ?? ''}" id="Crafting_shaped_idortag${i}" onchange="Crafting_shaped_onchange(${i});">
+            tag : <input type="text" value="${keys[i][2] ?? ''}" id="Crafting_shaped_idortag${i}" onchange="Crafting_shaped_onchange(${i});">
         `;
     }
 }
@@ -75,6 +74,10 @@ function Crafting_shaped_generate()
 {
     let obj = CreateNewObject();
     obj = AddElement(obj, CreateNewPair("type", '"minecraft:crafting_shaped"'));
+
+    let group = document.getElementById("Crafting_shaped_group").value;
+    if (group != "") obj = AddElement(obj, CreateNewPair("group", `"${group}"`));
+
     let pattern = CreateNewArray();
     
     let cells = [];
@@ -100,7 +103,8 @@ function Crafting_shaped_generate()
         while (true)
         {
             let ukey = CreateNewObject();
-            ukey = AddElement(ukey, CreateNewPair(tempKeys[i][1], `"${tempKeys[i][2]}"`));
+            if (tempKeys[i][1] != "") ukey = AddElement(ukey, CreateNewPair("item", `"${tempKeys[i][1]}"`));
+            if (tempKeys[i][2] != "") ukey = AddElement(ukey, CreateNewPair("tag", `"${tempKeys[i][2]}"`));
             sames.push(ukey);
             i++;
             if (i >= tempKeys.length || tempKeys[i][0] != skey) break;
